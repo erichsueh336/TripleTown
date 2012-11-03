@@ -5,6 +5,7 @@
 package tripletown;
 
 import javax.swing.JButton;
+import java.util.Vector;
 
 /**
  *
@@ -34,13 +35,22 @@ public class Button extends JButton {
         return row;
     }
     
-    public String getImgName() {
-        return imgName;
+    public int getImgInt() {
+        return imgInt;
     }
     
-    public void setImgName(String str) {
-        this.imgName = str;
+    public void setImgInt(int i) {
+        this.imgInt = i;
     }
+    
+    public void setBearCount(int i ) {
+        this.bearCount = i;
+    }
+    
+    public int getBearCount() {
+        return bearCount;
+    }
+    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -51,7 +61,7 @@ public class Button extends JButton {
     
     private int column;
     private int row;
-    private String imgName;
+    private int imgInt;
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -64,11 +74,53 @@ public class Button extends JButton {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-        map.search(this);
+        //System.out.println("row = " + row);
+        //System.out.println("column = " + column);
+        if(imgInt == 0 && map.nextOne.getImgInt() != robot) {
+            if(map.nextOne.getImgInt() < bear) {
+                map.setImg(this, map.nextOne.getImgInt());
+                while(map.search(this));
+                map.checkBear(this);
+            }
+            else if(map.nextOne.getImgInt() == bear) {
+                Vector<Button> bearsToTomb;
+                map.setImg(this, bear);
+                setBearCount(map.bearCount);
+                map.bearCount++;
+                bearsToTomb = map.EnoughSpace(this);
+                
+                if(bearsToTomb != null) {
+                    //System.err.println("bears dead");
+                    map.killBears(bearsToTomb, this);
+                }
+                /*
+                else {
+                    System.err.println("bears not dead");
+                }
+                */
+            }
+            else if(map.nextOne.getImgInt() == crystal) {
+                map.putCrystal(this);
+            }
+            map.randNext();
+            map.checkBear(this);
+            map.bearMove(map.getBears());
+        }
+        else if(imgInt != 0 && map.nextOne.getImgInt() == robot) {
+            map.setImg(this, ground);
+            map.randNext();
+            map.checkBear(this);
+            map.bearMove(map.getBears());
+        }
     }//GEN-LAST:event_formMouseClicked
 
     
     Map map;
+    int bearCount = 0;
+    int ground = 0, grass = 1, bush = 2, tree = 3, hut = 4, house = 5,
+            mension = 6, castle = 7, floatingcastle = 8, triplecastle = 9,
+            bear = 10, tomb = 11, church = 12, cathedral = 13, treasure = 14,
+            bigtreasure = 15, ninja = 16, rock = 17, mountain = 18, crystal = 21, robot = 22;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }
